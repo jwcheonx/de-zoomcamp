@@ -15,4 +15,6 @@ docker container run -d \
   --mount type=volume,source=ny-taxi-pg-data,target=/var/lib/postgresql/data \
   --publish 127.0.0.1:5432:5432 \
   postgres:17.2-alpine3.21
+
+uv run ingest_data.py
 ```

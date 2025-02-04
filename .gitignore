@@ -1,2 +1,4 @@
 .venv/
 mise.local.toml
+
+*.parquet
