@@ -17,4 +17,11 @@ docker container run -d \
   postgres:17.2-alpine3.21
 
 uv run ingest_data.py
+
+# sudo apt-get install libpq-dev
+uvx pgcli \
+  --host 127.0.0.1 \
+  --port 5432 \
+  --username postgres \
+  ny_taxi
 ```
