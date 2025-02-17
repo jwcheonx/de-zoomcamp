@@ -1,23 +1,40 @@
+import argparse
 import os.path
 import subprocess
 
 import polars as pl
 
-URL = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet"
-FILENAME = os.path.basename(URL)
 
-print(f"Downloading {FILENAME} ...")
-subprocess.run(["wget", "-qO", FILENAME, URL], check=True)
+def main(params: argparse.Namespace) -> None:
+    filename = os.path.basename(params.url)
 
-# print(pl.read_parquet_schema(FILENAME))
+    print(f"Downloading {filename} ...")
+    subprocess.run(["wget", "-qO", filename, params.url], check=True)
 
-print("Writing to database ...")
-df = pl.read_parquet(FILENAME)
-df.write_database(
-    table_name="yellow_taxi_trips",
-    connection="postgresql://postgres:secret@127.0.0.1:5432/ny_taxi",
-    if_table_exists="replace",
-    engine="sqlalchemy",
-)
+    # print(pl.read_parquet_schema(filename))
 
-print("Data ingestion complete.")
+    print("Writing to database ...")
+    df = pl.read_parquet(filename)
+    df.write_database(
+        table_name=params.table_name,
+        connection=f"postgresql://{params.user}:{params.password}@{params.server}:{params.port}/{params.database}",
+        if_table_exists="replace",
+        engine="sqlalchemy",
+    )
+
+    print("Data ingestion complete.")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--url", required=True)
+    parser.add_argument("--pass", required=True, dest="password")
+    parser.add_argument("--database", required=True)
+    parser.add_argument("--table_name", required=True)
+
+    parser.add_argument("--user", default="postgres")
+    parser.add_argument("--server", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=5432)
+
+    main(parser.parse_args())

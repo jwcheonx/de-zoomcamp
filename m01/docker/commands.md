@@ -16,7 +16,11 @@ docker container run -d \
   --publish 127.0.0.1:5432:5432 \
   postgres:17.2-alpine3.21
 
-uv run ingest_data.py
+uv run ingest_data.py \
+  --url https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet \
+  --pass secret \
+  --database ny_taxi \
+  --table_name yellow_taxi_trips
 
 # sudo apt-get install libpq-dev
 uvx pgcli \
