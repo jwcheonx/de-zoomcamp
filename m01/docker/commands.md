@@ -16,7 +16,12 @@ docker container run -d \
   --publish 127.0.0.1:5432:5432 \
   postgres:17.2-alpine3.21
 
-uv run ingest_data.py \
+docker image build \
+  --tag jwcheonx/ny-taxi-data-ingestor:0.1.0 \
+  .
+docker container run --rm -it \
+  --network container:db-ny-taxi \
+  jwcheonx/ny-taxi-data-ingestor:0.1.0 \
   --url https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet \
   --pass secret \
   --database ny_taxi \
