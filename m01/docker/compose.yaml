@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:17.2-alpine3.21
+    environment:
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=ny_taxi
+    volumes:
+      - type: volume
+        source: ny-taxi-pg-data
+        target: /var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:5432:5432
+
+  ingest-data:
+    build: .
+    tty: true
+    command:
+      - --url=https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2021-01.parquet
+      - --pass=secret
+      - --database=ny_taxi
+      - --table_name=yellow_taxi_trips
+      - --server=db
+    depends_on:
+      - db
+    profiles:
+      - tools
+
+volumes:
+  ny-taxi-pg-data:

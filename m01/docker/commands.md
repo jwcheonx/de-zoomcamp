@@ -34,3 +34,12 @@ uvx pgcli \
   --username postgres \
   ny_taxi
 ```
+
+```sh
+docker compose \
+  # --profile tools \
+  up -d
+
+docker compose run --build --rm \
+  ingest-data
+```
